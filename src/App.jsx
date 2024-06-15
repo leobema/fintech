@@ -1,16 +1,31 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 
 function App() {
   const [selectedCoin, setSelectedCoin] = useState('');
   const [amount, setAmount] = useState('');
-  const ars = 1280;
+  const [ars, setArs] = useState(0);
+
+  useEffect(() => {
+    fetch("https://dolarapi.com/v1/dolares/blue")
+      .then(response => response.json())
+      .then(data => {
+        setArs(data.venta);
+      })
+      .catch(error => console.error('Error fetching the ARS value:', error));
+  }, []);
 
   const handleCoinChange = (event) => {
     setSelectedCoin(event.target.value);
   };
 
   const handleAmountChange = (event) => {
-    setAmount(event.target.value);
+    const value = event.target.value;
+    if (value > 0) {
+      setAmount(value);
+    } else {
+      setAmount('');
+    }
   };
 
   const handleSendMessage = () => {
@@ -65,7 +80,7 @@ function App() {
                       Monto en $ARS a cambiar <span className="text-2xl">${calculatedValue}</span>
                       {' '} y usted recibirá: <span className="text-green-700 text-2xl">{amount}$ USD</span>
                     </p>
-                    <button className=' mt-2 bg-green-400 p-2 border-spacing-2 rounded-md' onClick={handleSendMessage}>Cambiar</button>
+                    <button className=' mt-2 bg-green-400 p-2 border-spacing-2 rounded-md' onClick={handleSendMessage}>Iniciar Trámite</button>
                   </div>
                 )}
               </div>
